@@ -38,6 +38,6 @@ Actions:
     Compute:
       Type: EC2 # Defines the action's properties.
     Configuration:
-      StackName: thumbnail-service-cdk-stack
+      StackName: ThumbnailServiceCdkStack
     DependsOn:
       - AWSCDKBootstrap

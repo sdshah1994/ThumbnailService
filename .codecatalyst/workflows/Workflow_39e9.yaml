@@ -1,44 +1,82 @@
 Name: Workflow_39e9
 SchemaVersion: "1.0"
-
-# Optional - Set automatic triggers.
 Triggers:
-  - Type: Push
+  - Type: PUSH
     Branches:
       - main
-
-# Required - Define action configurations.
 Actions:
-  AWSCDKBootstrap:
-    # Identifies the action. Do not modify this value.
-    Identifier: aws/cdk-bootstrap@v1.1.0
-    # Required; You can use an environment to access AWS resources.
+  Build:
+    Actions:
+      build_backend:
+        Identifier: aws/build@v1
+        Compute:
+          Type: Lambda
+        Inputs:
+          Sources:
+            - WorkflowSource
+          Variables:
+            - Name: AWS_DEFAULT_REGION
+              Value: us-west-2
+            - Name: CDK_DEFAULT_ACCOUNT
+              Value: "402377214432"
+            - Name: CDK_DEFAULT_REGION
+              Value: us-west-2
+        Outputs:
+          AutoDiscoverReports:
+            Enabled: true
+            ReportNamePrefix: backend
+            IncludePaths:
+              - "**/*"
+            SuccessCriteria:
+              PassRate: 100
+              BranchCoverage: 50
+              LineCoverage: 70
+              Vulnerabilities:
+                Severity: CRITICAL
+          Artifacts:
+            - Name: backend
+              Files:
+                - "**/*"
+        Configuration:
+          Steps:
+            - Run: pip3 install -r requirements-dev.txt
+          Container:
+            Registry: CODECATALYST
+            Image: CodeCatalystLinuxLambda_x86_64:2024_03
+        Environment:
+          Name: development
+      cdk_bootstrap:
+        Identifier: aws/cdk-bootstrap@v1
+        Environment:
+          Name: development
+        Inputs:
+          Sources:
+            - WorkflowSource
+        Compute:
+          Type: Lambda
+        Configuration:
+          Region: us-west-2
+          CdkCliVersion: 2.130.0
+  DeployBackend:
+    Identifier: aws/cdk-deploy@v1
     Environment:
       Name: development
-    # Specifies the source and/or artifacts to pass to the action as input.
     Inputs:
-      # Optional
       Sources:
-        - WorkflowSource # This specifies that the action requires this Workflow as a source
+        - WorkflowSource
+      Variables:
+        - Name: AWS_DEFAULT_REGION
+          Value: us-west-2
+        - Name: CDK_DEFAULT_ACCOUNT
+          Value: "402377214432"
+        - Name: CDK_DEFAULT_REGION
+          Value: us-west-2
     Compute:
       Type: Lambda
     Configuration:
+      StackName: ThumbnailServiceCdkStack
       Region: us-west-2
       CdkCliVersion: 2.130.0
-  AWSCDKDeploy:
-    # Identifies the action. Do not modify this value.
-    Identifier: aws/cdk-deploy@v1.2.0
-    # Required; You can use an environment to access AWS resources.
-    Environment:
-      Name: development
-    # Specifies the source and/or artifacts to pass to the action as input.
-    Inputs:
-      # Optional
-      Sources:
-        - WorkflowSource # This specifies that the action requires this Workflow as a source
-    Compute:
-      Type: EC2 # Defines the action's properties.
-    Configuration:
-      StackName: ThumbnailServiceCdkStack
+      Context: '{"environment":"development"}'
     DependsOn:
-      - AWSCDKBootstrap
+      - Build

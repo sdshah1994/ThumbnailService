@@ -22,7 +22,7 @@ export class ThumbnailServiceCdkStack extends Stack {
 
 
     const handler = new Function(this, 'handler-function-resizeImg', {
-      runtime: Runtime.PYTHON_3_9,
+      runtime: Runtime.NODEJS_18_X,
       timeout: Duration.seconds(20),
       handler: 'app.s3_thumbnail_generator',
       code: Code.fromAsset(join(__dirname, '../lambdas')),
@@ -44,7 +44,7 @@ export class ThumbnailServiceCdkStack extends Stack {
 
       // List all thumbnails
       const handlerListThumbnails = new Function(this, 'handler-function-list-thumbs', {
-        runtime: Runtime.PYTHON_3_9, 
+        runtime: Runtime.NODEJS_18_X, 
         handler: 'app.s3_get_thumbnail_urls', // we are using python here!
         timeout: Duration.seconds(20),
         memorySize: 512,

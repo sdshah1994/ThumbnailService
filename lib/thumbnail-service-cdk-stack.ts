@@ -61,7 +61,6 @@ export class ThumbnailServiceCdkStack extends Stack {
 
     const s3Bucket = new s3.Bucket(this, 'photo-bucket', {
       removalPolicy: RemovalPolicy.DESTROY,
-      autoDeleteObjects: true
     });
     s3Bucket.grantReadWrite(handler);
 

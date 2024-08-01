@@ -29,7 +29,7 @@ export class ThumbnailServiceCdkStack extends Stack {
       layers: [LayerVersion.fromLayerVersionArn(
         this,
         "PIL",
-        "arn:aws:lambda:us-west-2:770693421928:layer:Klayers-python38-Pillow:15"
+        "arn:aws:lambda:us-west-2:770693421928:layer:Klayers-p38-Pillow:10"
       )],
       environment: {
          MY_TABLE: table.tableName,
@@ -49,7 +49,7 @@ export class ThumbnailServiceCdkStack extends Stack {
         timeout: Duration.seconds(20),
         memorySize: 512,
         code: Code.fromAsset(join(__dirname, '../lambdas')),
-        layers: [LayerVersion.fromLayerVersionArn(this,"PIL-2", 'arn:aws:lambda:us-west-2:770693421928:layer:Klayers-python38-Pillow:15' )],
+        layers: [LayerVersion.fromLayerVersionArn(this,"PIL-2", 'arn:aws:lambda:us-west-2:770693421928:layer:Klayers-p38-Pillow:10' )],
         environment: {
           MY_TABLE: table.tableName,
           REGION_NAME: "us-west-2",

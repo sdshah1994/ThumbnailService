@@ -22,14 +22,14 @@ export class ThumbnailServiceCdkStack extends Stack {
 
 
     const handler = new Function(this, 'handler-function-resizeImg', {
-      runtime: Runtime.PYTHON_3_11,
+      runtime: Runtime.PYTHON_3_8,
       timeout: Duration.seconds(20),
       handler: 'app.s3_thumbnail_generator',
       code: Code.fromAsset(join(__dirname, '../lambdas')),
       layers: [LayerVersion.fromLayerVersionArn(
         this,
         "PIL",
-        "arn:aws:lambda:us-west-2:770693421928:layer:Klayers-p311-Pillow:4"
+        "arn:aws:lambda:us-west-2:770693421928:layer:Klayers-python38-Pillow:15"
       )],
       environment: {
          MY_TABLE: table.tableName,
@@ -44,12 +44,12 @@ export class ThumbnailServiceCdkStack extends Stack {
 
       // List all thumbnails
       const handlerListThumbnails = new Function(this, 'handler-function-list-thumbs', {
-        runtime: Runtime.PYTHON_3_11, 
+        runtime: Runtime.PYTHON_3_8, 
         handler: 'app.s3_get_thumbnail_urls', // we are using python here!
         timeout: Duration.seconds(20),
         memorySize: 512,
         code: Code.fromAsset(join(__dirname, '../lambdas')),
-        layers: [LayerVersion.fromLayerVersionArn(this,"PIL-2", 'arn:aws:lambda:us-west-2:770693421928:layer:Klayers-p311-Pillow:4' )],
+        layers: [LayerVersion.fromLayerVersionArn(this,"PIL-2", 'arn:aws:lambda:us-west-2:770693421928:layer:Klayers-python38-Pillow:15' )],
         environment: {
           MY_TABLE: table.tableName,
           REGION_NAME: "us-west-2",
@@ -89,17 +89,6 @@ export class ThumbnailServiceCdkStack extends Stack {
 
     const mainPath = thumbsApi.root.addResource("images");
     mainPath.addMethod("GET", handlerApiIntegration)
-
-
-
-
-
-
-
-
-
-
-
   
   }
 }
